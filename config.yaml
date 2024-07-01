@@ -10,3 +10,11 @@ kafka:
   password: guest
   topic: processing_1
 
+mongodb:
+  url: ${ZG_MONGODB_URL}
+  database_name: ${ZG_MONGODB_NAME}
+
+redis:
+  address: ${ZG_REDIS_ADDRESS}
+  password: ${ZG_REDIS_PASSWORD}
+  db: ${ZG_REDIS_DB}

@@ -4,17 +4,17 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"time"
+	"github.com/golang/protobuf/ptypes/timestamp"
 )
 
 type Message struct {
-	UUID           string
+	Uuid           string
 	ContentType    string
 	MessageContent MessageContent
 }
 
 type MessageContent struct {
-	SendAt   time.Time
+	SendAt   *timestamp.Timestamp
 	Provider string
 	Consumer string
 	Title    string
@@ -37,7 +37,7 @@ func (m *Message) Unmarshal(data []byte) error {
 func (m Message) String() string {
 	return fmt.Sprintf(
 		"UUID: %s, ContentType: %s, MessageContent: %s",
-		m.UUID, m.ContentType, m.MessageContent.String(),
+		m.Uuid, m.ContentType, m.MessageContent.String(),
 	)
 }
 

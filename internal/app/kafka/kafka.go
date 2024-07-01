@@ -6,20 +6,23 @@ import (
 	"go.uber.org/zap"
 	"strings"
 	"sync"
+	"zg_nosql_repo/internal/app/shard_manager"
 	"zg_nosql_repo/internal/model"
 )
 
 type Kafka struct {
-	Config *Config
-	Logger *zap.Logger
-	Reader *kafka.Reader
-	wg     sync.WaitGroup
+	Config   *Config
+	Logger   *zap.Logger
+	Reader   *kafka.Reader
+	SManager *shard_manager.Manager
+	wg       sync.WaitGroup
 }
 
-func NewKafka(logger *zap.Logger, config *Config) *Kafka {
+func NewKafka(logger *zap.Logger, config *Config, sm *shard_manager.Manager) *Kafka {
 	return &Kafka{
-		Config: config,
-		Logger: logger,
+		Config:   config,
+		Logger:   logger,
+		SManager: sm,
 	}
 }
 
@@ -28,13 +31,15 @@ func (k *Kafka) StartKafka(ctx context.Context) {
 	go func() {
 		brokers := strings.Split(k.Config.Address, ",")
 		k.Reader = kafka.NewReader(kafka.ReaderConfig{
-			Brokers:  brokers,
-			Topic:    k.Config.Topics,
-			MinBytes: 10e3, // 10KB
-			MaxBytes: 10e6, // 10MB
+			Brokers:          brokers,
+			Topic:            k.Config.Topics,
+			MinBytes:         10e3, // 10KB
+			MaxBytes:         10e6, // 10MB
+			ReadBatchTimeout: 1,
 		})
 		for {
 			k.Receive(context.Background())
+			//time.Sleep(1 * time.Second)
 		}
 	}()
 	k.Logger.Info("Kafka writer initialized", zap.String("address", k.Config.Address), zap.String("topic", k.Config.Topics))
@@ -61,8 +66,11 @@ func (k *Kafka) Receive(ctx context.Context) {
 		k.Logger.Error("Failed to read message", zap.Error(err))
 	}
 
-	k.Logger.Info("Received message", zap.String("key", string(m.Key)), zap.String("value", string(m.Value)))
+	err = msg.Unmarshal(m.Value)
+	if err != nil {
+		k.Logger.Error("Failed to unmarshal message", zap.Error(err))
+	}
 
-	msg.Unmarshal(m.Value)
-	k.Logger.Info("Message received", zap.String("message received", msg.String()))
+	go k.SManager.Consume(ctx, msg)
+
 }

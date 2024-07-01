@@ -1,4 +1,4 @@
-package nosql
+package repository
 
 import (
 	"go.uber.org/fx"
@@ -10,12 +10,12 @@ func NewModule() fx.Option {
 	return fx.Module(
 		"repo",
 		fx.Provide(
-			NewRepoConfig,
-			NewRepo,
+			NewRepositoryConfig,
+			NewRepository,
 		),
 		fx.Invoke(
-			func(lc fx.Lifecycle, r *Repo) {
-				lc.Append(fx.StartStopHook(r.StartRepo, r.StopRepo))
+			func(lc fx.Lifecycle, r *Repository) {
+				lc.Append(fx.StartStopHook(r.StartRepository, r.StartRepository))
 			},
 		),
 		fx.Decorate(func(log *zap.Logger) *zap.Logger {

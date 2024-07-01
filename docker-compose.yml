@@ -1,0 +1,42 @@
+version: '3'
+
+networks:
+  local-net:
+    external: true
+
+services:
+  zg_mongodb:
+    image: mongo:latest
+    container_name: zg_mongodb
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodbdata:/data/db
+    networks:
+      - local-net
+
+#  zg_nosql_repo:
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile
+#    container_name: zg_nosql_repo
+#    env_file:
+#      - .env-docker
+#    networks:
+#      - local-net
+#    volumes:
+#      - .:/app
+#    depends_on:
+#      - zg_mongodb
+
+  zg_redis:
+    image: redis:latest
+    container_name: zg_redis
+    ports:
+      - '6379:6379'
+    networks:
+      - local-net
+
+volumes:
+  mongodbdata:
+
