@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package router;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "../../pkg/message_v1;message";
+
+message MessageContent {
+  google.protobuf.Timestamp send_at = 1;
+  string provider = 2;
+  string consumer = 3;
+  string title = 4;
+  string content = 5;
+}
+
+message Message {
+  string uuid = 1;
+  string content_type = 2;
+  MessageContent message_content = 3;
+}
+
+service MessageRouter {
+  rpc ReceiveMessage(Message) returns (Response);
+}
+
+message Response {
+  bool success = 1;
+  string message = 2;
+}

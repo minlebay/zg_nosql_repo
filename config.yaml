@@ -1,0 +1,12 @@
+telemetry:
+  enabled: true
+  interval: 10
+  address: localhost:8888
+
+kafka:
+  address: ${ZG_KAFKA_ADDRESS}
+  group_id: group_id
+  user: guest
+  password: guest
+  topic: processing_1
+
