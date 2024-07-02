@@ -3,9 +3,8 @@ package redis
 import cfg "go.uber.org/config"
 
 type Config struct {
-	Address  string `yaml:"address"`
-	Password string `yaml:"password"`
-	DB       string `yaml:"db"`
+	Address string `yaml:"address"`
+	DB      string `yaml:"db"`
 }
 
 func NewRedisConfig(provider cfg.Provider) (*Config, error) {

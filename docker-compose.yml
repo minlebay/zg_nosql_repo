@@ -15,6 +15,16 @@ services:
     networks:
       - local-net
 
+  zg_mongodb_2:
+    image: mongo:latest
+    container_name: zg_mongodb_2
+    ports:
+      - '27018:27018'
+    volumes:
+      - mongodbdata:/data/db2
+    networks:
+      - local-net
+
 #  zg_nosql_repo:
 #    build:
 #      context: .

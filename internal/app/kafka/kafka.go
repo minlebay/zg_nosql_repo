@@ -27,7 +27,6 @@ func NewKafka(logger *zap.Logger, config *Config, sm *shard_manager.Manager) *Ka
 }
 
 func (k *Kafka) StartKafka(ctx context.Context) {
-
 	go func() {
 		brokers := strings.Split(k.Config.Address, ",")
 		k.Reader = kafka.NewReader(kafka.ReaderConfig{
@@ -36,6 +35,7 @@ func (k *Kafka) StartKafka(ctx context.Context) {
 			MinBytes:         10e3, // 10KB
 			MaxBytes:         10e6, // 10MB
 			ReadBatchTimeout: 1,
+			GroupID:          k.Config.GroupID,
 		})
 		for {
 			k.Receive(context.Background())
@@ -46,7 +46,6 @@ func (k *Kafka) StartKafka(ctx context.Context) {
 }
 
 func (k *Kafka) StopKafka(ctx context.Context) {
-
 	k.wg.Wait()
 
 	if err := k.Reader.Close(); err != nil {
@@ -69,8 +68,8 @@ func (k *Kafka) Receive(ctx context.Context) {
 	err = msg.Unmarshal(m.Value)
 	if err != nil {
 		k.Logger.Error("Failed to unmarshal message", zap.Error(err))
+		return
 	}
 
 	go k.SManager.Consume(ctx, msg)
-
 }

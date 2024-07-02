@@ -70,10 +70,28 @@ func replaceEnvVariables(config map[string]interface{}) {
 		switch v := value.(type) {
 		case map[string]interface{}:
 			replaceEnvVariables(v)
+		case []interface{}:
+			replaceEnvVariablesInSlice(v)
 		case string:
 			if strings.HasPrefix(v, "${") && strings.HasSuffix(v, "}") {
 				envVar := v[2 : len(v)-1]
 				config[key] = os.Getenv(envVar)
+			}
+		}
+	}
+}
+
+func replaceEnvVariablesInSlice(s []interface{}) {
+	for i, value := range s {
+		switch v := value.(type) {
+		case map[string]interface{}:
+			replaceEnvVariables(v)
+		case []interface{}:
+			replaceEnvVariablesInSlice(v)
+		case string:
+			if strings.HasPrefix(v, "${") && strings.HasSuffix(v, "}") {
+				envVar := v[2 : len(v)-1]
+				s[i] = os.Getenv(envVar)
 			}
 		}
 	}

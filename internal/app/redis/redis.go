@@ -31,9 +31,8 @@ func (r *Redis) StartRedis(ctx context.Context) {
 		}
 
 		r.db = redis.NewClient(&redis.Options{
-			Addr:     r.Config.Address,
-			Password: r.Config.Password,
-			DB:       int(numdb),
+			Addr: r.Config.Address,
+			DB:   int(numdb),
 		})
 	}()
 }

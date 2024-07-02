@@ -5,16 +5,17 @@ telemetry:
 
 kafka:
   address: ${ZG_KAFKA_ADDRESS}
-  group_id: group_id
+  group_id: nosql_repo
   user: guest
   password: guest
   topic: processing_1
 
-mongodb:
-  url: ${ZG_MONGODB_URL}
-  database_name: ${ZG_MONGODB_NAME}
+dbs:
+  mongodbs:
+    - ${ZG_MONGODB_URL_1}
+    - ${ZG_MONGODB_URL_2}
 
 redis:
   address: ${ZG_REDIS_ADDRESS}
-  password: ${ZG_REDIS_PASSWORD}
   db: ${ZG_REDIS_DB}
+

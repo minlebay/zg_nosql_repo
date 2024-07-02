@@ -5,14 +5,14 @@ import (
 )
 
 type Config struct {
-	Url          string `yaml:"url"`
-	DatabaseName string `yaml:"database_name"`
+	Dbs []string `yaml:"mongodbs"`
 }
 
 func NewRepositoryConfig(provider cfg.Provider) (*Config, error) {
 	config := Config{}
 
-	if err := provider.Get("mongodb").Populate(&config); err != nil {
+	err := provider.Get("dbs").Populate(&config)
+	if err != nil {
 		return nil, err
 	}
 
