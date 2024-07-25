@@ -6,6 +6,7 @@ import (
 	"go.uber.org/zap"
 	"strings"
 	"sync"
+	"time"
 	"zg_nosql_repo/internal/app/shard_manager"
 	"zg_nosql_repo/internal/model"
 )
@@ -39,7 +40,7 @@ func (k *Kafka) StartKafka(ctx context.Context) {
 		})
 		for {
 			k.Receive(context.Background())
-			//time.Sleep(1 * time.Second)
+			time.Sleep(1 * time.Second)
 		}
 	}()
 	k.Logger.Info("Kafka writer initialized", zap.String("address", k.Config.Address), zap.String("topic", k.Config.Topics))

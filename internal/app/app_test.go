@@ -3,18 +3,24 @@ package app
 import (
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 	"testing"
 	"zg_nosql_repo/internal/app/kafka"
+	"zg_nosql_repo/internal/app/log"
+	"zg_nosql_repo/internal/app/redis"
+	"zg_nosql_repo/internal/app/repository"
+	"zg_nosql_repo/internal/app/shard_manager"
 )
 
 func TestValidateApp(t *testing.T) {
 	err := fx.ValidateApp(
 		fx.Options(
 			kafka.NewModule(),
+			redis.NewModule(),
+			repository.NewModule(),
+			shard_manager.NewModule(),
+			log.NewModule(),
 		),
 		fx.Provide(
-			zap.NewProduction,
 			NewConfig,
 		),
 	)

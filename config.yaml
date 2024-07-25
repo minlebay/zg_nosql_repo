@@ -16,6 +16,9 @@ dbs:
     - ${ZG_MONGODB_URL_2}
 
 redis:
-  address: ${ZG_REDIS_ADDRESS}
+  address: ${ZG_REDIS_URL}
   db: ${ZG_REDIS_DB}
+
+logstash:
+  url: ${LOGSTASH_URL}
 

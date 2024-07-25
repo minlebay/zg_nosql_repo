@@ -19,7 +19,7 @@ func NewModule() fx.Option {
 			},
 		),
 		fx.Decorate(func(log *zap.Logger) *zap.Logger {
-			return log.Named("kafka")
+			return log.Named("nosql_kafka")
 		}),
 	)
 }

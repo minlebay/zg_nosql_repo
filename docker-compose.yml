@@ -25,19 +25,20 @@ services:
     networks:
       - local-net
 
-#  zg_nosql_repo:
-#    build:
-#      context: .
-#      dockerfile: ./Dockerfile
-#    container_name: zg_nosql_repo
-#    env_file:
-#      - .env-docker
-#    networks:
-#      - local-net
-#    volumes:
-#      - .:/app
-#    depends_on:
-#      - zg_mongodb
+  zg_nosql_repo:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: zg_nosql_repo
+    env_file:
+      - .env-docker
+    networks:
+      - local-net
+    volumes:
+      - .:/app
+    depends_on:
+      - zg_mongodb
+      - zg_mongodb_2
 
   zg_nosql_redis_index:
     image: redis:latest
