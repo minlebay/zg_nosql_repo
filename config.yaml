@@ -1,8 +1,3 @@
-telemetry:
-  enabled: true
-  interval: 10
-  address: localhost:8888
-
 kafka:
   address: ${ZG_KAFKA_ADDRESS}
   group_id: nosql_repo
