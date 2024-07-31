@@ -1,4 +1,4 @@
-package redis
+package tracer
 
 import (
 	"go.uber.org/fx"
@@ -8,18 +8,18 @@ import (
 func NewModule() fx.Option {
 
 	return fx.Module(
-		"redis",
+		"sharding",
 		fx.Provide(
-			NewRedisConfig,
-			NewRedis,
+			NewTracerConfig,
+			NewTracer,
 		),
 		fx.Invoke(
-			func(lc fx.Lifecycle, r *Redis) {
-				lc.Append(fx.StartStopHook(r.StartRedis, r.StopRedis))
+			func(lc fx.Lifecycle, t *Tracer) {
+				lc.Append(fx.StartStopHook(t.StartTracer, t.StopTracer))
 			},
 		),
 		fx.Decorate(func(log *zap.Logger) *zap.Logger {
-			return log.Named("nosql_redis")
+			return log.Named("nosql_sharding")
 		}),
 	)
 }

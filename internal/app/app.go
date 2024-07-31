@@ -7,6 +7,7 @@ import (
 	"zg_nosql_repo/internal/app/redis"
 	"zg_nosql_repo/internal/app/repository"
 	"zg_nosql_repo/internal/app/shard_manager"
+	"zg_nosql_repo/internal/app/tracer"
 )
 
 func NewApp() *fx.App {
@@ -17,6 +18,7 @@ func NewApp() *fx.App {
 			repository.NewModule(),
 			shard_manager.NewModule(),
 			log.NewModule(),
+			tracer.NewModule(),
 		),
 		fx.Provide(
 			NewConfig,

@@ -15,7 +15,7 @@ func NewModule() fx.Option {
 		),
 		fx.Invoke(
 			func(lc fx.Lifecycle, r *Repository) {
-				lc.Append(fx.StartStopHook(r.StartRepository, r.StartRepository))
+				lc.Append(fx.StartStopHook(r.StartRepository, r.StopRepository))
 			},
 		),
 		fx.Decorate(func(log *zap.Logger) *zap.Logger {

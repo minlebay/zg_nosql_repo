@@ -9,6 +9,7 @@ import (
 	"zg_nosql_repo/internal/app/redis"
 	"zg_nosql_repo/internal/app/repository"
 	"zg_nosql_repo/internal/app/shard_manager"
+	"zg_nosql_repo/internal/app/tracer"
 )
 
 func TestValidateApp(t *testing.T) {
@@ -19,6 +20,7 @@ func TestValidateApp(t *testing.T) {
 			repository.NewModule(),
 			shard_manager.NewModule(),
 			log.NewModule(),
+			tracer.NewModule(),
 		),
 		fx.Provide(
 			NewConfig,
