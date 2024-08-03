@@ -1,5 +1,5 @@
 kafka:
-  address: ${ZG_KAFKA_ADDRESS}
+  address: ${ZG_KAFKA_ADDRESS:127:0:0:1:9092}
   group_id: nosql_repo
   user: guest
   password: guest
@@ -7,16 +7,16 @@ kafka:
 
 dbs:
   mongodbs:
-    - ${ZG_MONGODB_URL_1}
-    - ${ZG_MONGODB_URL_2}
+    - ${ZG_MONGODB_URL_1:mongodb://localhost:27017/zg_mongodb}
+    - ${ZG_MONGODB_URL_2:mongodb://localhost:27017/zg_mongodb_2}
 
 redis:
-  address: ${ZG_REDIS_URL}
-  db: ${ZG_REDIS_DB}
+  address: ${ZG_REDIS_URL27:0:0:1:6379}
+  db: ${ZG_REDIS_DB:0}
 
 logstash:
-  url: ${LOGSTASH_URL}
+  url: ${LOGSTASH_URL:http://localhost:5000}
 
 tracer:
-  url: ${TRACER_URL}
+  url: ${TRACER_URL:http://localhost:14268/api/traces}
   enabled: true
