@@ -9,6 +9,7 @@ import (
 	"hash/crc32"
 	"strconv"
 	"sync"
+	"time"
 	"zg_nosql_repo/internal/app/redis"
 	"zg_nosql_repo/internal/app/repository"
 	"zg_nosql_repo/internal/model"
@@ -68,6 +69,7 @@ func (m *Manager) Consume(ctx context.Context, msg *model.Message) {
 	m.Logger.Info("Message stored", zap.String("uuid", created.Uuid), zap.Int("shard", shardIndex))
 
 	ctx, span := m.Tracer.Start(ctx, "Consume to "+strconv.Itoa(shardIndex))
+	span.SetAttributes(attribute.Int64("timestamp", time.Now().Unix()))
 	span.SetAttributes(attribute.String("message_id", created.Uuid))
 	span.SetAttributes(attribute.Int("shard_index", shardIndex))
 	defer span.End()

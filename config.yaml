@@ -1,5 +1,5 @@
 kafka:
-  address: ${ZG_KAFKA_ADDRESS:127:0:0:1:9092}
+  address: ${ZG_KAFKA_ADDRESS:localhost:9092}
   group_id: nosql_repo
   user: guest
   password: guest
@@ -11,7 +11,7 @@ dbs:
     - ${ZG_MONGODB_URL_2:mongodb://localhost:27017/zg_mongodb_2}
 
 redis:
-  address: ${ZG_REDIS_URL27:0:0:1:6379}
+  address: ${ZG_REDIS_URL:localhost:6379}
   db: ${ZG_REDIS_DB:0}
 
 logstash:
