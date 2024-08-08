@@ -24,23 +24,23 @@ func NewTracer(config *Config, logger *zap.Logger) *Tracer {
 }
 
 func (t *Tracer) StartTracer() {
-	url := t.Config.Url
+	go func() {
+		url := t.Config.Url
 
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
-	if err != nil {
-		t.Logger.Error("Failed to create Jaeger exporter", zap.Error(err))
-	}
+		exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(url)))
+		if err != nil {
+			t.Logger.Error("Failed to create Jaeger exporter", zap.Error(err))
+		}
 
-	t.tp = trace.NewTracerProvider(
-		trace.WithBatcher(exp),
-		trace.WithResource(resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("zg_nosql_repo"),
-		)),
-	)
-
-	otel.SetTracerProvider(t.tp)
-
+		t.tp = trace.NewTracerProvider(
+			trace.WithBatcher(exp),
+			trace.WithResource(resource.NewWithAttributes(
+				semconv.SchemaURL,
+				semconv.ServiceNameKey.String("zg_nosql_repo"),
+			)),
+		)
+		otel.SetTracerProvider(t.tp)
+	}()
 }
 
 func (t *Tracer) StopTracer() {

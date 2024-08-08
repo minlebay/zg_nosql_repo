@@ -9,7 +9,6 @@ import (
 	"hash/crc32"
 	"strconv"
 	"sync"
-	"time"
 	"zg_nosql_repo/internal/app/redis"
 	"zg_nosql_repo/internal/app/repository"
 	"zg_nosql_repo/internal/model"
@@ -30,13 +29,12 @@ func NewManager(
 	redis *redis.Redis,
 	repo *repository.Repository,
 ) *Manager {
-	tracer := otel.Tracer("nosql_shard-manager")
 	return &Manager{
 		Config:     config,
 		Logger:     logger,
 		Redis:      redis,
 		Repository: repo,
-		Tracer:     tracer,
+		Tracer:     otel.Tracer("nosql-repo-shard-manager"),
 	}
 }
 
@@ -53,26 +51,22 @@ func (m *Manager) Consume(ctx context.Context, msg *model.Message) {
 	m.wg.Add(1)
 	defer m.wg.Done()
 
-	// Calculate shard number
+	ctx, span := m.Tracer.Start(ctx, "Consume message")
+	defer span.End()
+
 	shardIndex, err := m.GetShardIndex(ctx, msg.Uuid)
 	if err != nil {
 		m.Logger.Error("Failed to get shard index", zap.Error(err))
 		return
 	}
+	span.SetAttributes(attribute.Int("shard_index", shardIndex))
 
 	created, err := m.Repository.Create(ctx, *m.Repository.DBs[shardIndex], msg)
-
 	if err != nil {
 		m.Logger.Error("Failed to store message", zap.Error(err))
 		return
 	}
 	m.Logger.Info("Message stored", zap.String("uuid", created.Uuid), zap.Int("shard", shardIndex))
-
-	ctx, span := m.Tracer.Start(ctx, "Consume to "+strconv.Itoa(shardIndex))
-	span.SetAttributes(attribute.Int64("timestamp", time.Now().Unix()))
-	span.SetAttributes(attribute.String("message_id", created.Uuid))
-	span.SetAttributes(attribute.Int("shard_index", shardIndex))
-	defer span.End()
 
 	bytes := []byte(strconv.Itoa(shardIndex))
 	err = m.Redis.Put(created.Uuid, bytes)
