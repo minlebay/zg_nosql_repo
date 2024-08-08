@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"context"
 	"github.com/go-redis/redis"
 	"go.uber.org/zap"
 	"sort"
@@ -23,7 +22,7 @@ func NewRedis(logger *zap.Logger, config *Config) *Redis {
 	}
 }
 
-func (r *Redis) StartRedis(ctx context.Context) {
+func (r *Redis) StartRedis() {
 	go func() {
 		numdb, err := strconv.ParseInt(r.Config.DB, 10, 64)
 		if err != nil {
@@ -37,7 +36,7 @@ func (r *Redis) StartRedis(ctx context.Context) {
 	}()
 }
 
-func (r *Redis) StopRedis(ctx context.Context) {
+func (r *Redis) StopRedis() {
 	r.wg.Wait()
 	err := r.db.Close()
 	if err != nil {

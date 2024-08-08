@@ -40,11 +40,11 @@ func NewManager(
 	}
 }
 
-func (m *Manager) StartManager(ctx context.Context) {
+func (m *Manager) StartManager() {
 	m.Logger.Info("Shard manager started")
 }
 
-func (m *Manager) StopManager(ctx context.Context) {
+func (m *Manager) StopManager() {
 	m.wg.Wait()
 	m.Logger.Info("Shard manager stopped")
 }

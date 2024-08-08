@@ -29,7 +29,7 @@ func NewRepository(logger *zap.Logger, config *Config) *Repository {
 	}
 }
 
-func (r *Repository) StartRepository(ctx context.Context) {
+func (r *Repository) StartRepository() {
 	go func() {
 		for _, db := range r.Config.Dbs {
 			url, err := url2.Parse(db)
@@ -56,7 +56,7 @@ func (r *Repository) StartRepository(ctx context.Context) {
 	}()
 }
 
-func (r *Repository) StopRepository(ctx context.Context) {
+func (r *Repository) StopRepository() {
 	r.wg.Wait()
 	r.ClientDisconnect()
 	r.CancelFunc()
