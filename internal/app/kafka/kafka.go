@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"
+	"os"
+	"os/signal"
 	"strings"
 	"sync"
 	"time"
@@ -27,7 +29,7 @@ func NewKafka(logger *zap.Logger, config *Config, sm *shard_manager.Manager) *Ka
 	}
 }
 
-func (k *Kafka) StartKafka(ctx context.Context) {
+func (k *Kafka) StartKafka() {
 	go func() {
 		brokers := strings.Split(k.Config.Address, ",")
 		k.Reader = kafka.NewReader(kafka.ReaderConfig{
@@ -38,15 +40,17 @@ func (k *Kafka) StartKafka(ctx context.Context) {
 			ReadBatchTimeout: 1,
 			GroupID:          k.Config.GroupID,
 		})
+		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+		defer cancel()
 		for {
-			k.Receive(context.Background())
+			k.Receive(ctx)
 			time.Sleep(1 * time.Second)
 		}
 	}()
 	k.Logger.Info("Kafka writer initialized", zap.String("address", k.Config.Address), zap.String("topic", k.Config.Topics))
 }
 
-func (k *Kafka) StopKafka(ctx context.Context) {
+func (k *Kafka) StopKafka() {
 	k.wg.Wait()
 
 	if err := k.Reader.Close(); err != nil {
